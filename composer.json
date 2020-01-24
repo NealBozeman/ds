@@ -1,0 +1,13 @@
+{
+    "name": "njb/ds",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Neal Bozeman",
+            "email": "neal@nealbozeman.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
