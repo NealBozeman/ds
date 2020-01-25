@@ -2,6 +2,7 @@
 
 namespace njb\ds;
 use njb\ds\Transform;
+echo 'made it'; exit();
 
 Class WPStore {
 
@@ -11,7 +12,7 @@ Class WPStore {
         }
     }
 
-    function post_expand_meta ($post_id, $post, $is_update) {
+    public static function post_expand_meta ($post_id, $post, $is_update) {
 
         $obj = json_decode( $raw_json , true );
     
