@@ -11,8 +11,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "njb\\ds\\Transform": "src/",
-            "njb\\ds\\WPStore": "src/"
+            "njb\\ds\\": "src/"
         }
     },
     "require": {}
