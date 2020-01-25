@@ -1,4 +1,5 @@
 <?php
+namespace njb\ds;
 
 Class Transform {
 
@@ -7,7 +8,7 @@ Class Transform {
 	const TASK_META_DELIMITERS = ['|','$','.'];
 
 
-	function flattenArrayValues($array) {
+	public static function flattenArrayValues($array) {
 		$arr = [];
 		foreach (array_keys($array) as $item) {
 			$arr[$item] = $array[$item][0];
@@ -16,7 +17,7 @@ Class Transform {
 	}
 
 
-	function serialize($obj, $path='', $pos='$', &$results=[]) {
+	public static function serialize($obj, $path='', $pos='$', &$results=[]) {
 		//scenarios
 		// $obj has keys, so check keys
 		//	- key is an int so create an array positional and send back to serializeMeta. key|
@@ -27,21 +28,21 @@ Class Transform {
 			foreach ($obj as $key=>$val) {
 				if(is_numeric($key)) {
 					if(is_array($val)) {
-						serialize($val, $path . '|', $pos . ',' . $key, $results);
+						self::serialize($val, $path . '|', $pos . ',' . $key, $results);
 					} else {
-						$results[]=$path.'|'.escapeVal($val). $pos . ',' . $key;
+						$results[]=$path.'|'.self::escapeVal($val). $pos . ',' . $key;
 					}
 				} else {
 					if(is_array($val)) {
-						serialize($val, $path .$key . '.', $pos, $results);
+						self::serialize($val, $path .$key . '.', $pos, $results);
 					} else {
-						$results[]=$path.$key.'='.escapeVal($val) . $pos;
+						$results[]=$path.$key.'='.self::escapeVal($val) . $pos;
 					}
 				}
 				
 			}
 		} else {
-			$results[]=$path . escapeVal($obj) .$pos;
+			$results[]=$path . self::escapeVal($obj) .$pos;
 		}
 
 		if($path=='') { // clean up shit
@@ -52,22 +53,21 @@ Class Transform {
 		return $results;
 	}
 
-	function escapeVal($val) {
+	public static function escapeVal($val) {
 		foreach(TASK_ESCAPE_CHARS as $char) {
 			$val=preg_replace('/([^\\\])(['.$char.'])/', '$1\\\\$2', $val);
 		}
 		return ($val);	  
 	}
 
-	function unescapeVal($val) {
+	public static function unescapeVal($val) {
 		foreach (TASK_ESCAPE_CHARS as $char) {
 			$val=preg_replace('/([\\\])(['.$char.'])/', '$2', $val);
 		}
 		return $val;
 	}
 
-	function unserialize($arr) {
-		print_r($arr);
+	public static function unserialize($arr) {
 		$obj=[];
 		$lpos=0;
 		$cpos=0;
@@ -89,18 +89,18 @@ Class Transform {
 						
 						if(preg_match_all("/(.*?)(?<!\\\\)[\.](.*?)(?<!\\\\)[\=](.*?)(?<!\\\\)[\$]/", $shit_to_interp, $smatch)) {
 							//found this.value=something
-							$tmp = addslashes(unescapeVal($smatch[3][0]));
+							$tmp = addslashes(self::unescapeVal($smatch[3][0]));
 							$to_eval.="['{$smatch[1][0]}']['{$smatch[2][0]}']='{$tmp}'";
 							print_r($smatch);
 
 						}elseif(preg_match_all("/(.*?)(?<!\\\\)[\=](.*?)(?<!\\\\)[\$]/", $shit_to_interp, $smatch)) {
-							$tmp = addslashes(unescapeVal($smatch[2][0]));
+							$tmp = addslashes(self::unescapeVal($smatch[2][0]));
 							$to_eval.="['{$smatch[1][0]}']='{$tmp}'";
 							echo 'yay!!'; print_r($smatch); 
 
 
 						} else {
-							$to_eval.="='" . addslashes(unescapeVal($node)) . "'";
+							$to_eval.="='" . addslashes(self::unescapeVal($node)) . "'";
 						}
 					break;
 
